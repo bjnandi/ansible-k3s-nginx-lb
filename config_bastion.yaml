@@ -1,0 +1,95 @@
+---
+- name: Install kubectl on Ubuntu
+  hosts: bastion
+  become: true
+  gather_facts: true
+  vars_files:
+    - project_vars
+  tasks:
+
+    - name: Install kubectl using Snap
+      ansible.builtin.shell:
+        cmd: "snap install kubectl --classic"
+
+    - name: Check kubectl version
+      ansible.builtin.shell:
+        cmd: "kubectl version --client"
+
+    - name: Create directory if not exist
+      file:
+        path: "{{ target_directory }}"
+        state: directory
+        mode: 0755  # Adjust the permissions as needed
+
+    - name: Create empty file if not exist
+      command: touch "{{ target_directory }}/{{ target_file }}"
+
+    - name: Copy file to remote host
+      ansible.builtin.copy:
+        src: "{{ local_dest }}k3s.yaml"
+        dest: "{{ target_directory }}/{{target_file}}"
+
+    - name: Replace kube config value in a file
+      ansible.builtin.replace:
+        path: "{{ target_directory }}/config"
+        regexp: '127.0.0.1'
+        replace: "{{master_ip}}"
+    
+
+    # - name: Install required dependencies
+    #   apt:
+    #     name:
+    #       - apt-transport-https
+    #       - ca-certificates
+    #       - curl
+    #       - gnupg-agent
+    #       - software-properties-common
+    #     state: present
+
+    # - name: Add the Kubernetes apt repository key
+    #   apt_key:
+    #     url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    #     state: present
+
+    # - name: Add the Kubernetes apt repository
+    #   apt_repository:
+    #     repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+    #     state: present
+
+    # - name: Install kubectl
+    #   apt:
+    #     name: kubectl
+    #     state: present
+
+    # - name: Download and install Helm
+    #   get_url:
+    #     url: https://get.helm.sh/helm-v3.7.0-linux-amd64.tar.gz
+    #     dest: /home/ubuntu/
+    #   register: download_result
+    # - debug: msg={{download_result}}
+    # - name: Extract Helm archive
+    #   ansible.builtin.unarchive:
+    #     src: "{{download_result.dest}}" 
+    #     dest: /home/ubuntu
+    #     remote_src: true
+    #   # when: not stat_result.stat.exists
+    # - name: find the helm folder
+    #   find: 
+    #     path: /home/ubuntu
+    #     pattern: "linux-*"
+    #     file_type: directory
+    #   register: find_result
+    # - debug: msg={{find_result}}
+    # - name: Move Helm binary to /usr/local/bin
+    #   ansible.builtin.command:
+    #     cmd: "mv {{find_result.files[0].path}}/helm /usr/local/bin/helm"
+
+    # - name: Clean up temporary files
+    #   ansible.builtin.file:
+    #     path: "{{download_result.dest}}" 
+    #     state: absent
+
+    # - name: Clean up extracted files
+    #   ansible.builtin.file:
+    #     path: "{{find_result.files[0].path}}" 
+    #     state: absent

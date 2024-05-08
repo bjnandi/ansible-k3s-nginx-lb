@@ -1,0 +1,12 @@
+master_ip: 10.0.1.66
+
+remote_dest: /home/ubuntu/k3s_token
+local_dest: /workspaces/ansible-k3s-nginx-lb/ansible/temp/
+
+local_nginxl7_file: /workspaces/ansible-k3s-nginx-lb/nginxl7
+
+kubeconfig_path: /etc/rancher/k3s/k3s.yaml
+k8s_app_state: present #absent  
+
+target_directory: /home/ubuntu/.kube
+target_file: config

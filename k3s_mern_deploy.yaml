@@ -1,0 +1,45 @@
+---
+- name: Deploy Kubernetes Resources
+  hosts: k3s_nodes
+  gather_facts: no
+  become: yes
+  vars_files:
+    - project_vars
+  tasks:
+    - name: Create Client Deployment & Service
+      kubernetes.core.k8s:
+        kubeconfig: "{{ kubeconfig_path }}"
+        state: "{{ k8s_app_state }}"
+        definition: "{{ lookup('file', './k3s/client.yaml') }}"
+
+    - name: Create MongoDB secret for the MongoDB root password 
+      kubernetes.core.k8s:
+        kubeconfig: "{{ kubeconfig_path }}"
+        state: "{{ k8s_app_state }}"
+        definition: "{{ lookup('file', './k3s/mongodb-secret.yaml') }}"
+
+    - name: Create MongoDB ConfigMap for the mongodb-init-script
+      kubernetes.core.k8s:
+        kubeconfig: "{{ kubeconfig_path }}"
+        state: "{{ k8s_app_state }}"
+        definition: "{{ lookup('file', './k3s/mongodb-init-script.yaml') }}"
+
+    - name: Create MongoDB service and StatefulSet pod for MongoDB
+      kubernetes.core.k8s:
+        kubeconfig: "{{ kubeconfig_path }}"
+        state: "{{ k8s_app_state }}"
+        definition: "{{ lookup('file', './k3s/mongodb.yaml') }}"
+    
+    - name: Add a user to the Mongodb database which we create on ConfigMap
+      kubernetes.core.k8s:
+        kubeconfig: "{{ kubeconfig_path }}"
+        state: "{{ k8s_app_state }}"
+        definition: "{{ lookup('file', './k3s/mongodb-init-job.yaml') }}"
+
+    - name: Create Server Deployment & Service
+      kubernetes.core.k8s:
+        kubeconfig: "{{ kubeconfig_path }}"
+        state: "{{ k8s_app_state }}"
+        definition: "{{ lookup('file', './k3s/server.yaml') }}"
+    
+    

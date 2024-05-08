@@ -1,0 +1,5 @@
+{
+    "name": "Ansible Development",
+    "dockerFile": "Dockerfile",
+    "extensions": ["ms-vscode.makefile-tools"]
+}
