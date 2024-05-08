@@ -1,4 +1,4 @@
-master_ip: 10.0.1.66
+master_ip: 10.0.1.222
 
 remote_dest: /home/ubuntu/k3s_token
 local_dest: /workspaces/ansible-k3s-nginx-lb/ansible/temp/

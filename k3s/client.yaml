@@ -34,6 +34,6 @@ spec:
     spec:
       containers:
       - name: client
-        image: bjnandi/crud-app-mern-client:v1.0.1
+        image: bjnandi/ci-cd-mern-k3s-frontend:v1.0.1
         ports:
         - containerPort: 80

@@ -34,7 +34,7 @@ spec:
     spec:
       containers:
       - name: server
-        image: bjnandi/crud-app-mern-server:v1.0.1
+        image: bjnandi/ci-cd-mern-k3s-backend:v1.0.1
         ports:
         - containerPort: 5000
         env:
